@@ -1,0 +1,15 @@
+.wrapper {
+    display: flex;
+}
+
+.notifications {
+    border: 1px solid black;
+    width: 200px;
+    min-height: 200px;
+}
+
+.messages {
+    border: 1px solid black;
+    width: 200px;
+    min-height: 200px;
+}

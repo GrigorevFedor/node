@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Socket</title>
+    <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"
+        integrity="sha384-PiBR5S00EtOj2Lto9Uu81cmoyZqR57XcOna1oAuVuIEjzj0wpqDVfD0JA9eXlRsj"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <input id="input" type="text" autofocus>
+    <button id="button">Send</button>
+    <span id="total">total users: 0</span>
+    <div class="wrapper" style="display: flex;">
+        <div class="messages" id="messages" style="border: 1px solid black;
+            width: 300px;
+            min-height: 200px;"></div>
+        <div class="notifications" id="notifications" style="border: 1px solid black;
+            width: 300px;
+            min-height: 200px;"></div>
+    </div>
+
+    <script>
+        const socket = io('localhost:5555');
+        const messagesBlock = document.querySelector('#messages');
+        const notificationsBlock = document.querySelector('#notifications');
+        const total = document.querySelector('#total');
+        const sendButton = document.querySelector('#button');
+        const input = document.querySelector('#input');
+
+        sendButton.onclick = () => {
+            const data = {
+                message: input.value,
+            };
+            socket.emit('client-msg', data);
+            input.value = '';
+        }
+
+        socket.on('connect', () => {
+            console.log('client-conected');
+            // socket.emit('client-conected', true);
+        });
+        socket.on('server-disconnect', (data) => {
+            notificationsBlock.insertAdjacentHTML('afterbegin', `<div style="color: red;">client ${data} was disconnected</div>`);
+        });
+        socket.on('server-connect', (data) => {
+            notificationsBlock.insertAdjacentHTML('afterbegin', `<div style="color: green;">client ${data} was connected</div>`);
+        });
+        socket.on('refresh', (data) => {
+            console.log('refresh');
+            total.textContent = `total users: ${data}`;
+        });
+        // socket.on('reconnect', () => {
+        //     console.log('client-reconnected');
+        //     socket.emit('client-reconnected', true);
+        // });
+        socket.on('server-msg', data => {
+            messagesBlock.insertAdjacentHTML('afterbegin', `<div style="border: 1px solid black; margin: 0;">
+                <p style="margin: 0;color: ${data.color};border:1px solid black;">${data.name}</p>
+                <p>${data.message}</p>
+                </div>`);
+        });
+    </script>
+</body>
+
+</html>
