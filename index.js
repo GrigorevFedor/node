@@ -64,12 +64,18 @@ const io = socket(server);
 io.on('connection', client => {
     console.log('client - connect', client.id);
     usersList.push(createNewUser(client.id))
+    // console.log(usersList);
     client.broadcast.emit('server-connect', usersList.find(el => el.id == client.id)?.name);
     client.broadcast.emit('refresh', usersList.length);
+
+    client.emit('server-connect', usersList.find(el => el.id == client.id)?.name);
+    client.emit('refresh', usersList.length);
 
     client.on('client-msg', data => {
         const payload = {
             message: data.message,
+            name: usersList.find(el => el.id == client.id)?.name,
+            color: usersList.find(el => el.id == client.id)?.color,
         };
 
         client.broadcast.emit('server-msg', payload);
@@ -85,6 +91,7 @@ io.on('connection', client => {
         console.log('client - disconnect', client.id);
         client.broadcast.emit('server-disconnect', usersList.find(el => el.id == client.id)?.name);
         client.broadcast.emit('refresh', usersList.length);
+        usersList.splice(usersList[usersList.findIndex(el => client.id == el.id)], 1);
     });
 
 });

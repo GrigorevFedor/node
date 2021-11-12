@@ -16,10 +16,10 @@
     <span id="total">total users: 0</span>
     <div class="wrapper" style="display: flex;">
         <div class="messages" id="messages" style="border: 1px solid black;
-            width: 200px;
+            width: 300px;
             min-height: 200px;"></div>
         <div class="notifications" id="notifications" style="border: 1px solid black;
-            width: 200px;
+            width: 300px;
             min-height: 200px;"></div>
     </div>
 
@@ -41,7 +41,7 @@
 
         socket.on('connect', () => {
             console.log('client-conected');
-            socket.emit('client-conected', true);
+            // socket.emit('client-conected', true);
         });
         socket.on('server-disconnect', (data) => {
             notificationsBlock.insertAdjacentHTML('afterbegin', `<div style="color: red;">client ${data} was disconnected</div>`);
@@ -50,6 +50,7 @@
             notificationsBlock.insertAdjacentHTML('afterbegin', `<div style="color: green;">client ${data} was connected</div>`);
         });
         socket.on('refresh', (data) => {
+            console.log('refresh');
             total.textContent = `total users: ${data}`;
         });
         // socket.on('reconnect', () => {
@@ -57,22 +58,10 @@
         //     socket.emit('client-reconnected', true);
         // });
         socket.on('server-msg', data => {
-            messagesBlock.insertAdjacentHTML('afterbegin', `<div>${data.message}</div>`);
-        });
-
-
-
-
-
-
-        socket.on('server-connect', data => {
-            notificationsBlock.insertAdjacentHTML('afterbegin', `<div>${data.message}</div>`);
-        });
-        socket.on('server-reconnect', data => {
-            notificationsBlock.insertAdjacentHTML('afterbegin', `<div>${data.message}</div>`);
-        });
-        socket.on('server-disconect', data => {
-            notificationsBlock.insertAdjacentHTML('afterbegin', `<div>${data.message}</div>`);
+            messagesBlock.insertAdjacentHTML('afterbegin', `<div style="border: 1px solid black; margin: 0;">
+                <p style="margin: 0;color: ${data.color};border:1px solid black;">${data.name}</p>
+                <p>${data.message}</p>
+                </div>`);
         });
     </script>
 </body>
